@@ -2,7 +2,6 @@ from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from connexio import connexio
-from schemas import word_schema
 import CRUD.read as read
 import CRUD.update as update
 import CRUD.create as create
@@ -22,7 +21,7 @@ async def get_usuario():
     text = read.get_usuario()  # Recupera el text inicial de la base de dades
     if not text:
         raise HTTPException(status_code=404, detail="No s'han trobat")
-    return word_schema(text)  # Retorna els resultats en format JSON
+    return text # Retorna els resultats en format JSON
 
 #----------------------------------POST-------------------------------------------
 # Endpoint que retorna el nombre d'intents i l'incrementa

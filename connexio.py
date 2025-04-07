@@ -8,8 +8,8 @@ def connexio():
         database = "carplaytrade",
         user = "milena",
         password = "mh1l3n4a",
-        host = "localhost",
-        port = "5432"
+        host = "192.168.35.5",
+        port = "8443"
     )
 
 db_pool = pooling.MySQLConnectionPool(pool_name="mypool", pool_size=5, **db_config)

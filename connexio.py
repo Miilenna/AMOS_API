@@ -1,5 +1,6 @@
 # Imports
 import psycopg2
+from mysql.connector import pooling;
 
 # Función para establecer una conexión con la base de datos PostgreSQL
 def connexio():
@@ -10,3 +11,8 @@ def connexio():
         host = "localhost",
         port = "5432"
     )
+
+db_pool = pooling.MySQLConnectionPool(pool_name="mypool", pool_size=5, **db_config)
+
+def get_db_connection():
+    return db_pool.get_connection()

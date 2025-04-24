@@ -102,7 +102,7 @@ def create_coche_detallado():
     conn=connexio()
     cur = conn.cursor()
     try:
-        query= """INSERT INTO (
+        query= """INSERT INTO coche(
                     marca, 
                     modelo, 
                     anyo, 

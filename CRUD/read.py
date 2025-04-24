@@ -35,7 +35,7 @@ def get_coche_detallado():
 
 
 #PG REGISTRO
-def get_usuario():
+def get_usuario_registro():
     conn = connexio()
     cur = conn.cursor()
 
@@ -48,7 +48,7 @@ def get_usuario():
     return text
 
 #PG INICIO_SESION
-def get_usuario():
+def get_usuario_sesion():
     conn = connexio()
     cur = conn.cursor()
 

@@ -1,15 +1,9 @@
 from connexio import connexio
 import psycopg2
+from .models import Usuario, Coche, Movimiento, Divisa
 
 #PG REGISTRO
-def create_usuario():
-    nombre = input("Introduce el nombre: ")
-    apellido = input("Introduce el apellido: ")
-    correo_electronico = input("Introduce el correo electrónico: ")
-    fecha_nacimiento = input("Introduce la fecha de nacimiento (YYYY-MM-DD): ")
-    contrasenya = input("Introduce la contraseña: ")
-    direccion = input("Introduce la dirección: ")
-    
+def create_usuario():    
     # Estableix una connexió amb la base de dades
     conn = connexio()
     cur = conn.cursor()
@@ -21,7 +15,7 @@ def create_usuario():
             fecha_nacimiento,
             contrasenya,
             direccion) VALUES (%s, %s, %s, %s, %s, %s);"""
-        values = (nombre, apellido,correo_electronico,fecha_nacimiento,contrasenya,direccion)
+        values = (Usuario.nombre, Usuario.apellido, Usuario.correo_electronico, Usuario.fecha_nacimiento, Usuario.contrasenya, Usuario.direccion)
         cur.execute(query, values)
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Insert successful"}
@@ -34,10 +28,6 @@ def create_usuario():
 
 #PG HACER_MOV
 def create_movimiento():
-    tipo_movimiento = input("Introduce el tipo de movimiento que quieres hacer: ")
-    divisa = input("Introduce el tipo de divisa: ")
-    valor = input("Introduce la cuantia del movimiento: ")
-    
     # Estableix una connexió amb la base de dades
     conn = connexio()
     cur = conn.cursor()
@@ -46,7 +36,7 @@ def create_movimiento():
             tipo_movimiento
             divisa,
             valor) VALUES (%s, %s, %s);"""
-        values = (tipo_movimiento, divisa, valor)
+        values = (Movimiento.tipo_movimiento, Divisa.divisa, Divisa.valor)
         cur.execute(query, values)
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Insert successful"}
@@ -59,12 +49,6 @@ def create_movimiento():
 
 #PG PERFIL
 def create_perfil():
-    nombre = input("Introduce el nombre: ")
-    apellido = input("Introduce el apellido: ")
-    correo_electronico = input("Introduce el correo electrónico: ")
-    fecha_nacimiento = input("Introduce la fecha de nacimiento (YYYY-MM-DD): ")
-    direccion = input("Introduce la dirección: ")
-    
     # Estableix una connexió amb la base de dades
     conn = connexio()
     cur = conn.cursor()
@@ -75,7 +59,7 @@ def create_perfil():
             correo_electronico,
             fecha_nacimiento,
             direccion) VALUES (%s, %s, %s, %s, %s);"""
-        values = (nombre, apellido,correo_electronico,fecha_nacimiento,direccion)
+        values = (Usuario.nombre, Usuario.apellido, Usuario.correo_electronico, Usuario.fecha_nacimiento, Usuario.direccion)
         cur.execute(query, values)
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Insert successful"}
@@ -88,24 +72,13 @@ def create_perfil():
         
 #PG ANUNCIOS
 def create_coche_detallado():
-    marca = input("Introduce la marca: ")
-    modelo = input("Introduce el modelo: ")
-    anyo = input("Introduce el año: ")
-    kilometros = input("Introduce el kilometraje: ")
-    combustible = input("Introduce el combustible: ")
-    precio = input("Introduce el precio: ")
-    caballos = input("Introduce los caballos: ")
-    puertas = input("Introduce las puertas: ")
-    version = input("Introduce la versión: ")
-    plazas = input("Introduce las plazas: ")
-    
     conn=connexio()
     cur = conn.cursor()
     try:
         query= """INSERT INTO coche(
                     marca, 
                     modelo, 
-                    anyo, 
+                    any, 
                     kilometros, 
                     combustible, 
                     precio, 
@@ -114,7 +87,7 @@ def create_coche_detallado():
                     version, 
                     plazas)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
-        values = (marca, modelo, anyo, kilometros, combustible, precio, caballos, puertas, version, plazas)
+        values = (Coche.marca, Coche.modelo, Coche.any, Coche.kilometros, Coche.combustible, Coche.precio, Coche.caballos, Coche.puertas, Coche.version, Coche.plazas)
         cur.execute(query, values)
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Insert successful"}

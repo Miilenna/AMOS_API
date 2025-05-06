@@ -1,17 +1,17 @@
-import connexio
-from mysql.connector import pooling
+# Imports
+import psycopg2
+from mysql.connector import pooling;
 
-# Configura la connexió a MariaDB
-db_config = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'Pa123@77',
-    'database': 'carplaytrade',
-    'port': '3307',
-    'collation': 'utf8mb4_general_ci'
-}
+# Función para establecer una conexión con la base de datos PostgreSQL
+def connexio():
+    return psycopg2.connect(
+        database = "carplaytrade",
+        user = "milena",
+        password = "mh1l3n4a",
+        host = "localhost",
+        port = "5432"
+    )
 
-# Pool de connexions
 db_pool = pooling.MySQLConnectionPool(pool_name="mypool", pool_size=5, **db_config)
 
 def get_db_connection():

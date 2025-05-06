@@ -1,40 +1,81 @@
 from connexio import connexio
 import psycopg2
-
-#-----------------------------ELIMINAR PARAULA------------------------------------
-def delete_paraula(id):
+        
+#PG REGISTRO
+def delete_usuario(contrasenya):
     # Estableix una connexió amb la base de dades
     conn = connexio()
     cur = conn.cursor()
     try:
-        # Elimina una fila de la taula "informació" basada en l'id proporcionat
-        query = "DELETE FROM informació WHERE id = %s;"
-        cur.execute(query, (id,))  # Passa el paràmetre id a la consulta
+        query = "DELETE FROM usuario WHERE id=%s"
+        cur.execute(query,(contrasenya))
         conn.commit()  # Confirma els canvis
-        return {"status": 1, "message": "Delete successful"}
+        return {"status": 1, "message": "Eliminado correctament"}
     except Exception as e:
-        # Mostra un error si la eliminació falla
-        print(f"Error during deletion: {e}")
-        return {"status": -1, "message": f"Error de connexió: {e}"}
+        return {"status": 0, "message": f"Error: {e}"}
     finally:
         cur.close()  # Tanca el cursor
         conn.close()  # Tanca la connexió amb la base de dades
 
-#-----------------------------ELIMINAR ABECEDARI------------------------------------
-def delete_alfabet(id_alfabet):
+
+#PG PERFIL
+def delete_perfil(contrasenya):    
     # Estableix una connexió amb la base de dades
     conn = connexio()
     cur = conn.cursor()
     try:
-        # Elimina una fila de la taula "alfabet" basada en l'id_alfabet proporcionat
-        query = "DELETE FROM alfabet WHERE id_alfabet = %s;"
-        cur.execute(query, (id_alfabet,))  # Passa el paràmetre id_alfabet a la consulta
+        query = "DELETE FROM usuario WHERE id=%s"
+        cur.execute(query, (contrasenya))
         conn.commit()  # Confirma els canvis
-        return {"status": 1, "message": "Delete successful"}
+        return {"status": 1, "message": "Eliminado correctament"}
     except Exception as e:
-        # Mostra un error si la eliminació falla
-        print(f"Error during deletion: {e}")
-        return {"status": -1, "message": f"Error de connexió: {e}"}
+        return {"status": 0, "message": f"Error: {e}"}
     finally:
         cur.close()  # Tanca el cursor
-        conn.close()  # Tanca la connexió
+        conn.close()  # Tanca la connexió amb la base de dades
+
+#PG ANUNCIOS
+def delete_coche_detallado(marca, modelo):
+    conn=connexio()
+    cur = conn.cursor()
+    try:
+        query= "DELETE FROM coche WHERE id=%s"
+        cur.execute(query, (marca, modelo))
+        conn.commit()  # Confirma els canvis
+        return {"status": 1, "message": "Eliminado correctament"}
+    except Exception as e:
+        return {"status": 0, "message": f"Error: {e}"}
+    finally:
+        cur.close()  # Tanca el cursor
+        conn.close()  # Tanca la connexió amb la base de dades
+        
+        
+#PG RESULTADOS
+def delete_coche_detallado():
+    conn=connexio()
+    cur = conn.cursor()
+    try:
+        query= "DELETE FROM coche WHERE id=%s"
+        cur.execute(query)
+        conn.commit()  # Confirma els canvis
+        return {"status": 1, "message": "Eliminado correctament"}
+    except Exception as e:
+        return {"status": 0, "message": f"Error: {e}"}
+    finally:
+        cur.close()  # Tanca el cursor
+        conn.close()  # Tanca la connexió amb la base de dades
+
+#PG INICIO, ANUNCIOS
+def delete_coche():
+    conn=connexio()
+    cur = conn.cursor()
+    try:
+        query= "DELETE FROM coche WHERE id=%s"
+        cur.execute(query)
+        conn.commit()  # Confirma els canvis
+        return {"status": 1, "message": "Eliminado correctament"}
+    except Exception as e:
+        return {"status": 0, "message": f"Error: {e}"}
+    finally:
+        cur.close()  # Tanca el cursor
+        conn.close()  # Tanca la connexió amb la base de dades

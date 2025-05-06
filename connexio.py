@@ -4,10 +4,10 @@ from mysql.connector import pooling
 # Configura la connexió a MariaDB
 db_config = {
     'host': 'localhost',
-    'user': 'root',
-    'password': 'Pa123@77',
-    'database': 'divises',
-    'port': '3307',
+    'user': '****',
+    'password': '****',
+    'database': 'carplaytrade',
+    'port': '****',
     'collation': 'utf8mb4_general_ci'
 }
 

@@ -1,7 +1,7 @@
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from connexio import connexio
+import connexio
 import CRUD.read as read
 import CRUD.update as update
 import CRUD.create as create
@@ -9,7 +9,6 @@ import CRUD.delete as delete
 from CRUD.models import Usuario, Divisa, Coche, Movimiento
 
 app = FastAPI()
-
 #----------------------------------USUARIO-------------------------------------------
 @app.get("/get/usuarios", response_model=List[dict])
 async def get_usuarios():
@@ -92,3 +91,4 @@ async def delete_perfil(contrasenya: str):
     return result
 
 #------------------------------------COCHE-----------------------------------------------------
+

@@ -3,7 +3,7 @@ import psycopg2
 from .models import Usuario, Coche, Movimiento, Divisa
 
 #PG REGISTRO
-def create_usuario():    
+def create_usuario(usuario: Usuario):    
     # Estableix una connexió amb la base de dades
     conn = connexio()
     cur = conn.cursor()
@@ -15,7 +15,7 @@ def create_usuario():
             fecha_nacimiento,
             contrasenya,
             direccion) VALUES (%s, %s, %s, %s, %s, %s);"""
-        values = (Usuario.nombre, Usuario.apellido, Usuario.correo_electronico, Usuario.fecha_nacimiento, Usuario.contrasenya, Usuario.direccion)
+        values = (usuario.nombre, usuario.apellido, usuario.correo_electronico, usuario.fecha_nacimiento, usuario.contrasenya, usuario.direccion)
         cur.execute(query, values)
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Insert successful"}
@@ -27,7 +27,7 @@ def create_usuario():
         conn.close()  # Tanca la connexió amb la base de dades
 
 #PG HACER_MOV
-def create_movimiento():
+def create_movimiento(movimiento: Movimiento, divisa: Divisa):
     # Estableix una connexió amb la base de dades
     conn = connexio()
     cur = conn.cursor()
@@ -36,7 +36,7 @@ def create_movimiento():
             tipo_movimiento
             divisa,
             valor) VALUES (%s, %s, %s);"""
-        values = (Movimiento.tipo_movimiento, Divisa.divisa, Divisa.valor)
+        values = (movimiento.tipo_movimiento, divisa.divisa, divisa.valor)
         cur.execute(query, values)
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Insert successful"}

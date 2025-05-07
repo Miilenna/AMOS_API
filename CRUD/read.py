@@ -48,11 +48,11 @@ def get_usuario_registro():
     return text
 
 #PG INICIO_SESION
-def get_usuario_sesion():
+def get_usuario_sesion(id: int):
     conn = connexio()
     cur = conn.cursor()
 
-    cur.execute("SELECT nombre, contrasenya FROM usuario WHERE id=%s;")
+    cur.execute("SELECT nombre, contrasenya FROM usuario WHERE id=%s;", (id,))
     text = cur.fetchall()
 
     cur.close()
@@ -61,17 +61,16 @@ def get_usuario_sesion():
     return text
 
 #PG MOVIMIENTOS
-def get_movimientos():
+def get_movimientos(id: int):
     conn = connexio()
     cur = conn.cursor()
     
     #añadir en la doc y en las tablas
     cur.execute("""
         SELECT m.tipo_movimiento, m.fecha_movimiento, d.valor, d.divisa
-        FROM movimiento m
-        JOIN divisa d ON m.id_divisa = d.id_divisa
+        FROM movimiento m JOIN divisa d ON m.id_divisa = d.id_divisa
         WHERE m.id_usuario = %s;
-    """)
+    """, (id,))
     text = cur.fetchall()
     
     cur.close()

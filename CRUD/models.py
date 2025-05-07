@@ -3,22 +3,30 @@ from typing import Optional
 from datetime import date
 
 class Usuario(BaseModel):
-    id: int
     nombre: str
     apellido: str
     correo_electronico: str
     fecha_nacimiento: date
     contrasenya: str
     direccion: str
+    IBAN: Optional[str] = None
+    cartera: Optional[float] = None
+    
+class UsuarioUpdate(BaseModel):
+    nombre: Optional[str] = None
+    apellido: Optional[str] = None
+    fecha_nacimiento: Optional[date]= None
+    contrasenya: Optional[str] = None
+    direccion: Optional[str] = None
+    IBAN: Optional[str] = None
+    cartera: Optional[float] = None
 
 class Divisa (BaseModel):
-	id: int
 	divisa: str
-	valor: str
+	valor: float
 	region: str
 
 class Coche(BaseModel):
-	id: int
 	id_usuario: int
 	marca: str
 	modelo: str
@@ -31,8 +39,7 @@ class Coche(BaseModel):
 	version: str
 	plazas: int
 
-class Movimiento (BaseModel):
-	id: int
+class Movimiento(BaseModel):
 	tipo_movimiento: str
 	id_usuario: int
 	fecha_movimiento: date

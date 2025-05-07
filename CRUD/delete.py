@@ -2,13 +2,13 @@ from connexio import connexio
 import psycopg2
         
 #PG REGISTRO
-def delete_usuario(contrasenya):
+def delete_usuario(id: int):
     # Estableix una connexió amb la base de dades
     conn = connexio()
     cur = conn.cursor()
     try:
-        query = "DELETE FROM usuario WHERE id=%s"
-        cur.execute(query,(contrasenya))
+        query = "DELETE FROM usuario WHERE contrasenya=%s"
+        cur.execute(query,(id,))
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Eliminado correctament"}
     except Exception as e:

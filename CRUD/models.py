@@ -19,9 +19,17 @@ class UsuarioUpdate(BaseModel):
     contrasenya: Optional[str] = None
     direccion: Optional[str] = None
     IBAN: Optional[str] = None
-    cartera: Optional[float] = None
-
-class Divisa (BaseModel):
+    cartera: Optional[float] = None 
+    
+class PerfilUpdate(BaseModel):
+    nombre: Optional[str] = None
+    apellido: Optional[str] = None
+    fecha_nacimiento: Optional[date]= None
+    direccion: Optional[str] = None
+    IBAN: Optional[str] = None
+class Movimiento(BaseModel):
+	tipo_movimiento: str
+	id_usuario: int
 	divisa: str
 	valor: float
 	region: str
@@ -38,8 +46,3 @@ class Coche(BaseModel):
 	puertas: int
 	version: str
 	plazas: int
-
-class Movimiento(BaseModel):
-	tipo_movimiento: str
-	id_usuario: int
-	fecha_movimiento: date

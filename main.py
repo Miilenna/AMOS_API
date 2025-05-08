@@ -6,7 +6,7 @@ import CRUD.update as update
 import CRUD.create as create
 import CRUD.delete as delete
 from mysql.connector import pooling
-from CRUD.models import Usuario, UsuarioUpdate, Movimiento, Divisa
+from CRUD.models import Usuario, UsuarioUpdate, Movimiento, PerfilUpdate
 
 
 app = FastAPI()
@@ -52,31 +52,23 @@ async def get_movimiento(id: int):
 
 # CREATE - Crear usuario
 @app.post("/post/movimiento")
-async def create_movimiento(movimiento: Movimiento, divisa: Divisa):
-    result = create.create_movimiento(movimiento, divisa)
+async def create_movimiento(movimiento: Movimiento):
+    result = create.create_movimiento(movimiento)
     return result
 
 
 #------------------------------PERFIL----------------------------------------------------------------
-@app.get("/get/perfil")
-async def get_perfil():
-    result = read.get_usuario_registro()
-    if not result:
+@app.get("/get/perfil/{id}")
+async def get_perfil(id: int):
+    perfil = read.get_usuario_registro(id)
+    if not perfil:
         raise HTTPException(status_code=404, detail="Usuarios no encontrados")
-    return result
-
-# CREATE - Crear usuario
-@app.post("/post/perfil")
-async def create_perfil():
-    result = create.create_perfil()
-    if result["status"] != 1:
-        raise HTTPException(status_code=500, detail=result["message"])
-    return result
+    return perfil
 
 # UPDATE - Actualizar usuario
-@app.put("/put/perfil/{id}")
-async def update_perfil(contrasenya: str):
-    result = update.update_perfil(contrasenya)
+@app.put("/put/perfil/{contrasenya}")
+async def update_perfil(contrasenya: str, perfil: PerfilUpdate):
+    result = update.update_perfil(contrasenya, perfil)
     if result["status"] != 1:
         raise HTTPException(status_code=500, detail=result["message"])
     return result

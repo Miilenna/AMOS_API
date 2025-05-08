@@ -35,11 +35,11 @@ def get_coche_detallado():
 
 
 #PG REGISTRO
-def get_usuario_registro():
+def get_usuario_registro(id: int):
     conn = connexio()
     cur = conn.cursor()
 
-    cur.execute("SELECT nombre, apellido, correo, contrasenya, direccion FROM usuario WHERE id=%s;")
+    cur.execute("SELECT nombre, apellido, correo_electronico, fecha_nacimiento, contrasenya, direccion, IBAN, cartera FROM usuario WHERE id=%s;", (id,))
     text = cur.fetchall()
 
     cur.close()
@@ -67,9 +67,9 @@ def get_movimientos(id: int):
     
     #añadir en la doc y en las tablas
     cur.execute("""
-        SELECT m.tipo_movimiento, m.fecha_movimiento, d.valor, d.divisa
-        FROM movimiento m JOIN divisa d ON m.id_divisa = d.id_divisa
-        WHERE m.id_usuario = %s;
+        SELECT tipo_movimiento, fecha_movimiento, valor, divisa
+        FROM movimiento 
+        WHERE id_usuario = %s;
     """, (id,))
     text = cur.fetchall()
     

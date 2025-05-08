@@ -34,15 +34,22 @@ class Movimiento(BaseModel):
 	valor: float
 	region: str
 
+class CocheDetallado(BaseModel):
+    id_usuario: Optional[int] = None
+    marca: Optional[str] = None
+    modelo: Optional[str] = None
+    anio: Optional[int] = None
+    kilometros: Optional[int] = None
+    combustible: Optional[int] = None
+    precio: Optional[int] = None
+    caballos: Optional[int] = None
+    puertas: Optional[int] = None
+    version: Optional[str] = None
+    plazas: Optional[int] = None
+    
 class Coche(BaseModel):
-	id_usuario: int
-	marca: str
-	modelo: str
-	any: int
-	kilometros: int
-	combustible: int
-	precio: int
-	caballos: int
-	puertas: int
-	version: str
-	plazas: int
+    id_usuario: Optional[int] = None
+    marca: Optional[str] = None
+    modelo: Optional[str] = None
+    anio: Optional[int] = None
+    precio: Optional[int] = None

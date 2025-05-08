@@ -72,14 +72,10 @@ async def update_perfil(contrasenya: str, perfil: PerfilUpdate):
     if result["status"] != 1:
         raise HTTPException(status_code=500, detail=result["message"])
     return result
-
-# DELETE - Eliminar usuario
-@app.delete("/delete/perfil/{id}")
-async def delete_perfil(contrasenya: str):
-    result = delete.delete_perfil(contrasenya)
-    if result["status"] != 1:
-        raise HTTPException(status_code=500, detail=result["message"])
-    return result
-
 #------------------------------------COCHE-----------------------------------------------------
-
+@app.get("/get/coche/{id_coche}")
+async def get_coche(id_coche: int):
+    coche = read.get_coche(id_coche)
+    if not coche:
+        raise HTTPException(status_code=404, detail="Usuarios no encontrados")
+    return coche

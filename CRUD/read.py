@@ -2,27 +2,33 @@ from connexio import connexio
 import psycopg2
 
 #PG INICIO, ANUNCIOS
-def get_coche():
+def get_coche(id_coche: int):
     conn=connexio()
     cur = conn.cursor()
     
-    cur.execute("""SELECT marca, modelo, precio, anyo 
-                FROM coche 
-                JOIN usuario ON coche.id_pais = usuario.id_pais 
-                WHERE usuario.id_pais = %s;""")
-    text = cur.fetchall()
+    cur.execute("""
+            SELECT 
+                id_usuario,
+                marca,
+                modelo,
+                anio,
+                precio
+            FROM coche 
+            WHERE id = %s;
+        """, (id_coche,))
+    coche_data = cur.fetchone()    
     
     cur.close()
     conn.close()
     
-    return text
+    return coche_data
 
 #PG RESULTADOS
 def get_coche_detallado():
     conn=connexio()
     cur = conn.cursor()
     
-    cur.execute("""SELECT marca, modelo, anyo, kilometros, combustible, precio, caballos, puertas, version, plazas 
+    cur.execute("""SELECT marca, modelo, anio, kilometros, combustible, precio, caballos, puertas, version, plazas 
                 FROM coche 
                 JOIN usuario ON coche.id_pais = usuario.id_pais 
                 WHERE usuario.id_pais = %s;""")

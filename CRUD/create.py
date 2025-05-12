@@ -1,9 +1,9 @@
 from connexio import connexio
 import psycopg2
-from .models import Usuario, Coche, Movimiento, Divisa
+from .models import Usuario, Coche, Movimiento
 
 #PG REGISTRO
-def create_usuario():    
+def create_usuario(usuario: Usuario):    
     # Estableix una connexió amb la base de dades
     conn = connexio()
     cur = conn.cursor()
@@ -15,7 +15,7 @@ def create_usuario():
             fecha_nacimiento,
             contrasenya,
             direccion) VALUES (%s, %s, %s, %s, %s, %s);"""
-        values = (Usuario.nombre, Usuario.apellido, Usuario.correo_electronico, Usuario.fecha_nacimiento, Usuario.contrasenya, Usuario.direccion)
+        values = (usuario.nombre, usuario.apellido, usuario.correo_electronico, usuario.fecha_nacimiento, usuario.contrasenya, usuario.direccion)
         cur.execute(query, values)
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Insert successful"}
@@ -27,16 +27,18 @@ def create_usuario():
         conn.close()  # Tanca la connexió amb la base de dades
 
 #PG HACER_MOV
-def create_movimiento():
+def create_movimiento(movimiento: Movimiento):
     # Estableix una connexió amb la base de dades
     conn = connexio()
     cur = conn.cursor()
     try:
-        query = """INSERT INTO movimiento (
-            tipo_movimiento
+        query = """INSERT INTO movimiento(
+            tipo_movimiento,
+            id_usuario,
             divisa,
-            valor) VALUES (%s, %s, %s);"""
-        values = (Movimiento.tipo_movimiento, Divisa.divisa, Divisa.valor)
+            valor,
+            region) VALUES (%s, %s, %s, %s, %s);"""
+        values = (movimiento.tipo_movimiento, movimiento.id_usuario, movimiento.divisa, movimiento.valor, movimiento.region)
         cur.execute(query, values)
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Insert successful"}
@@ -47,30 +49,7 @@ def create_movimiento():
         cur.close()  # Tanca el cursor
         conn.close()  # Tanca la connexió amb la base de dades
 
-#PG PERFIL
-def create_perfil():
-    # Estableix una connexió amb la base de dades
-    conn = connexio()
-    cur = conn.cursor()
-    try:
-        query = """INSERT INTO usuario (
-            nombre,
-            apellido,
-            correo_electronico,
-            fecha_nacimiento,
-            direccion) VALUES (%s, %s, %s, %s, %s);"""
-        values = (Usuario.nombre, Usuario.apellido, Usuario.correo_electronico, Usuario.fecha_nacimiento, Usuario.direccion)
-        cur.execute(query, values)
-        conn.commit()  # Confirma els canvis
-        return {"status": 1, "message": "Insert successful"}
-    except Exception as e:
-        # Retorna un error si la inserció falla
-        return {"status": -1, "message": f"Error de connexió: {e}"}
-    finally:
-        cur.close()  # Tanca el cursor
-        conn.close()  # Tanca la connexió amb la base de dades
-        
-#PG ANUNCIOS
+#PG ANUNCIOS INDIVIDUAL
 def create_coche_detallado():
     conn=connexio()
     cur = conn.cursor()
@@ -79,7 +58,7 @@ def create_coche_detallado():
                     marca, 
                     modelo, 
                     any, 
-                    kilometros, 
+                    kilometraje, 
                     combustible, 
                     precio, 
                     caballos, 

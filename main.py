@@ -1,94 +1,100 @@
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import connexio
 import CRUD.read as read
 import CRUD.update as update
 import CRUD.create as create
 import CRUD.delete as delete
-from CRUD.models import Usuario, Divisa, Coche, Movimiento
+from mysql.connector import pooling
+from CRUD.models import Usuario, UsuarioUpdate, Movimiento, PerfilUpdate, Coche
+
 
 app = FastAPI()
+
 #----------------------------------USUARIO-------------------------------------------
-@app.get("/get/usuarios", response_model=List[dict])
-async def get_usuarios():
-    usuarios = read.get_usuario_sesion()
-    if not usuarios:
-        raise HTTPException(status_code=404, detail="Usuarios no encontrados")
-    return usuarios
+@app.get("/get/usuarios/{id}")
+async def get_usuarios(id: int):
+    usuario = read.get_usuario_sesion(id)
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return usuario
 
 # CREATE - Crear usuario
 @app.post("/post/usuarios")
-async def create_usuario():
-    result = create.create_usuario()
-    if result["status"] != 1:
-        raise HTTPException(status_code=500, detail=result["message"])
-    return result
+async def create_usuario(usuario: Usuario):
+    resultado = create.create_usuario(usuario)
+    return resultado
 
 # UPDATE - Actualizar usuario
 @app.put("/put/usuarios/{id}")
-async def update_usuario(contrasenya: str):
-    result = update.update_usuario(contrasenya)
+async def update_usuario(id: int, usuario: UsuarioUpdate):
+    result = update.update_usuario(id, usuario)
     if result["status"] != 1:
         raise HTTPException(status_code=500, detail=result["message"])
     return result
 
+
 # DELETE - Eliminar usuario
-@app.delete("/delete/usuarios/{id}")
-async def delete_usuario(contrasenya: str):
-    result = delete.delete_usuario(contrasenya)
+@app.delete("/delete/usuarios/{contrasenya}")
+async def delete_usuario(id: int):
+    result = delete.delete_usuario(id)
     if result["status"] != 1:
         raise HTTPException(status_code=500, detail=result["message"])
     return result
 
 #------------------------------MOVIMIENTO-----------------------------------------------------
-@app.get("/get/movimiento", response_model=List[dict])
-async def get_movimiento():
-    result = read.get_movimientos()
+@app.get("/get/movimiento")
+async def get_movimiento(id: int):
+    result = read.get_movimientos(id)
     if not result:
         raise HTTPException(status_code=404, detail="Usuarios no encontrados")
     return result
 
 # CREATE - Crear usuario
 @app.post("/post/movimiento")
-async def create_movimiento():
-    result = create.create_movimiento()
-    if result["status"] != 1:
-        raise HTTPException(status_code=500, detail=result["message"])
+async def create_movimiento(movimiento: Movimiento):
+    result = create.create_movimiento(movimiento)
     return result
 
 
 #------------------------------PERFIL----------------------------------------------------------------
-@app.get("/get/perfil", response_model=List[dict])
-async def get_perfil():
-    result = read.get_usuario_registro()
-    if not result:
+@app.get("/get/perfil/{id}")
+async def get_perfil(id: int):
+    perfil = read.get_usuario_registro(id)
+    if not perfil:
         raise HTTPException(status_code=404, detail="Usuarios no encontrados")
-    return result
-
-# CREATE - Crear usuario
-@app.post("/post/perfil")
-async def create_perfil():
-    result = create.create_perfil()
-    if result["status"] != 1:
-        raise HTTPException(status_code=500, detail=result["message"])
-    return result
+    return perfil
 
 # UPDATE - Actualizar usuario
-@app.put("/put/perfil/{id}")
-async def update_perfil(contrasenya: str):
-    result = update.update_perfil(contrasenya)
+@app.put("/put/perfil/{contrasenya}")
+async def update_perfil(contrasenya: str, perfil: PerfilUpdate):
+    result = update.update_perfil(contrasenya, perfil)
     if result["status"] != 1:
         raise HTTPException(status_code=500, detail=result["message"])
     return result
-
-# DELETE - Eliminar usuario
-@app.delete("/delete/perfil/{id}")
-async def delete_perfil(contrasenya: str):
-    result = delete.delete_perfil(contrasenya)
-    if result["status"] != 1:
-        raise HTTPException(status_code=500, detail=result["message"])
-    return result
-
 #------------------------------------COCHE-----------------------------------------------------
+@app.get("/get/coche/{id_coche}")
+async def get_coche(id_coche: int):
+    coche = read.get_coche(id_coche)
+    if not coche:
+        raise HTTPException(status_code=404, detail="Usuarios no encontrados")
+    return coche
 
+@app.get("/get/coche_detallado/{id_coche}")
+async def get_coche_detallado(id_coche: int):
+    coche = read.get_coche_detallado(id_coche)
+    if not coche:
+        raise HTTPException(status_code=404, detail="Coche no encontrado")
+    return coche
+
+@app.put("/put/coche_detallado/{id_coche}")
+async def update_perfil(id_coche: int, coche: Coche):
+    result = update.update_coche_detallado(id_coche, coche)
+    if result["status"] != 1:
+        raise HTTPException(status_code=500, detail=result["message"])
+    return result
+
+@app.post("/post/coche_detallado")
+async def create_movimiento(coche: Coche):
+    result = create.create_coche_detallado(coche)
+    return result

@@ -1,45 +1,65 @@
 from connexio import connexio
 import psycopg2
 
-#PG INICIO, ANUNCIOS
-def get_coche():
+#PG INICIO, RESULTADOS
+def get_coche(id_coche: int):
     conn=connexio()
     cur = conn.cursor()
     
-    cur.execute("""SELECT marca, modelo, precio, anyo 
-                FROM coche 
-                JOIN usuario ON coche.id_pais = usuario.id_pais 
-                WHERE usuario.id_pais = %s;""")
-    text = cur.fetchall()
+    cur.execute("""
+            SELECT 
+                id_usuario,
+                marca,
+                modelo,
+                anio,
+                precio,
+                matricula
+            FROM coche 
+            WHERE id = %s;
+        """, (id_coche,))
+    coche_data = cur.fetchone()    
     
     cur.close()
     conn.close()
     
-    return text
+    return coche_data
 
-#PG RESULTADOS
-def get_coche_detallado():
-    conn=connexio()
+#PG ANUNCIOS INDIVIDUAL
+def get_coche_detallado(id_coche: int):
+    conn = connexio()
     cur = conn.cursor()
     
-    cur.execute("""SELECT marca, modelo, anyo, kilometros, combustible, precio, caballos, puertas, version, plazas 
-                FROM coche 
-                JOIN usuario ON coche.id_pais = usuario.id_pais 
-                WHERE usuario.id_pais = %s;""")
-    text = cur.fetchall()
+    cur.execute("""
+        SELECT 
+            id_usuario,  
+            stock,
+            marca,      
+            modelo,      
+            anio,        
+            kilometraje, 
+            combustible,
+            precio,     
+            matricula,
+            caballos,  
+            puertas,    
+            version,    
+            plazas       
+        FROM coche 
+        WHERE id = %s;
+    """, (id_coche,))
     
+    coche_data = cur.fetchone()  
     cur.close()
     conn.close()
     
-    return text
-
+    return coche_data 
 
 #PG REGISTRO
-def get_usuario_registro():
+def get_usuario_registro(id: int):
     conn = connexio()
     cur = conn.cursor()
 
-    cur.execute("SELECT nombre, apellido, correo, contrasenya, direccion FROM usuario WHERE id=%s;")
+    cur.execute("SELECT nombre, apellido, correo_electronico, fecha_nacimiento, contrasenya, direccion, IBAN, cartera FROM usuario WHERE id=%s;", (id,))
     text = cur.fetchall()
 
     cur.close()
@@ -48,11 +68,11 @@ def get_usuario_registro():
     return text
 
 #PG INICIO_SESION
-def get_usuario_sesion():
+def get_usuario_sesion(id: int):
     conn = connexio()
     cur = conn.cursor()
 
-    cur.execute("SELECT nombre, contrasenya FROM usuario WHERE id=%s;")
+    cur.execute("SELECT nombre, contrasenya FROM usuario WHERE id=%s;", (id,))
     text = cur.fetchall()
 
     cur.close()
@@ -61,17 +81,16 @@ def get_usuario_sesion():
     return text
 
 #PG MOVIMIENTOS
-def get_movimientos():
+def get_movimientos(id: int):
     conn = connexio()
     cur = conn.cursor()
     
     #añadir en la doc y en las tablas
     cur.execute("""
-        SELECT m.tipo_movimiento, m.fecha_movimiento, d.valor, d.divisa
-        FROM movimiento m
-        JOIN divisa d ON m.id_divisa = d.id_divisa
-        WHERE m.id_usuario = %s;
-    """)
+        SELECT tipo_movimiento, fecha_movimiento, valor, divisa
+        FROM movimiento 
+        WHERE id_usuario = %s;
+    """, (id,))
     text = cur.fetchall()
     
     cur.close()

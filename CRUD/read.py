@@ -1,7 +1,7 @@
 from connexio import connexio
 import psycopg2
 
-#PG INICIO, ANUNCIOS
+#PG INICIO, RESULTADOS
 def get_coche(id_coche: int):
     conn=connexio()
     cur = conn.cursor()
@@ -12,7 +12,8 @@ def get_coche(id_coche: int):
                 marca,
                 modelo,
                 anio,
-                precio
+                precio,
+                matricula
             FROM coche 
             WHERE id = %s;
         """, (id_coche,))
@@ -23,22 +24,35 @@ def get_coche(id_coche: int):
     
     return coche_data
 
-#PG RESULTADOS
-def get_coche_detallado():
-    conn=connexio()
+#PG ANUNCIOS INDIVIDUAL
+def get_coche_detallado(id_coche: int):
+    conn = connexio()
     cur = conn.cursor()
     
-    cur.execute("""SELECT marca, modelo, anio, kilometros, combustible, precio, caballos, puertas, version, plazas 
-                FROM coche 
-                JOIN usuario ON coche.id_pais = usuario.id_pais 
-                WHERE usuario.id_pais = %s;""")
-    text = cur.fetchall()
+    cur.execute("""
+        SELECT 
+            id_usuario,  
+            stock,
+            marca,      
+            modelo,      
+            anio,        
+            kilometraje, 
+            combustible,
+            precio,     
+            matricula,
+            caballos,  
+            puertas,    
+            version,    
+            plazas       
+        FROM coche 
+        WHERE id = %s;
+    """, (id_coche,))
     
+    coche_data = cur.fetchone()  
     cur.close()
     conn.close()
     
-    return text
-
+    return coche_data 
 
 #PG REGISTRO
 def get_usuario_registro(id: int):

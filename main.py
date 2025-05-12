@@ -6,7 +6,7 @@ import CRUD.update as update
 import CRUD.create as create
 import CRUD.delete as delete
 from mysql.connector import pooling
-from CRUD.models import Usuario, UsuarioUpdate, Movimiento, PerfilUpdate
+from CRUD.models import Usuario, UsuarioUpdate, Movimiento, PerfilUpdate, Coche
 
 
 app = FastAPI()
@@ -79,3 +79,22 @@ async def get_coche(id_coche: int):
     if not coche:
         raise HTTPException(status_code=404, detail="Usuarios no encontrados")
     return coche
+
+@app.get("/get/coche_detallado/{id_coche}")
+async def get_coche_detallado(id_coche: int):
+    coche = read.get_coche_detallado(id_coche)
+    if not coche:
+        raise HTTPException(status_code=404, detail="Coche no encontrado")
+    return coche
+
+@app.put("/put/coche_detallado/{id_coche}")
+async def update_perfil(id_coche: int, coche: Coche):
+    result = update.update_coche_detallado(id_coche, coche)
+    if result["status"] != 1:
+        raise HTTPException(status_code=500, detail=result["message"])
+    return result
+
+@app.post("/post/coche_detallado")
+async def create_movimiento(coche: Coche):
+    result = create.create_coche_detallado(coche)
+    return result

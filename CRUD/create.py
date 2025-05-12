@@ -49,7 +49,7 @@ def create_movimiento(movimiento: Movimiento):
         cur.close()  # Tanca el cursor
         conn.close()  # Tanca la connexió amb la base de dades
 
-#PG ANUNCIOS
+#PG ANUNCIOS INDIVIDUAL
 def create_coche_detallado():
     conn=connexio()
     cur = conn.cursor()
@@ -58,7 +58,7 @@ def create_coche_detallado():
                     marca, 
                     modelo, 
                     any, 
-                    kilometros, 
+                    kilometraje, 
                     combustible, 
                     precio, 
                     caballos, 

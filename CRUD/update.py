@@ -42,7 +42,6 @@ def update_perfil(contrasenya: str, perfil: PerfilUpdate):
     conn = connexio()
     cur = conn.cursor()
     try:
-        # Consulta SQL corregida para MariaDB/MySQL
         query = """
             UPDATE usuario 
             SET 
@@ -74,49 +73,43 @@ def update_perfil(contrasenya: str, perfil: PerfilUpdate):
         cur.close()
         conn.close()
         
-#PG ANUNCIOS
-def update_coche_detallado(marca, modelo):
+#PG ANUNCIOS INDIVIDUAL
+def update_coche_detallado(id_coche: int, coche: Coche):
     conn=connexio()
     cur = conn.cursor()
     try:
-        query= """UPDATE coche SET
-                    marca, 
-                    modelo, 
-                    anyo, 
-                    kilometros, 
-                    combustible, 
-                    precio, 
-                    caballos, 
-                    puertas, 
-                    version, 
-                    plazas = %s, %s, %s, %s, %s, %s, %s, %s, %s, %s WHERE id=%s;"""
-        cur.execute(query, (marca, modelo))
-        conn.commit()  # Confirma els canvis
-        return {"status": 1, "message": "Actualitzat correctament"}
-    except Exception as e:
-        return {"status": 0, "message": f"Error: {e}"}
-    finally:
-        cur.close()  # Tanca el cursor
-        conn.close()  # Tanca la connexió amb la base de dades
-        
-        
-#PG RESULTADOS
-def update_coche_detallado():
-    conn=connexio()
-    cur = conn.cursor()
-    try:
-        query= """UPDATE coche SET
-                    marca, 
-                    modelo, 
-                    anyo, 
-                    kilometros, 
-                    combustible, 
-                    precio, 
-                    caballos, 
-                    puertas, 
-                    version, 
-                    plazas = %s, %s, %s, %s, %s, %s, %s, %s, %s, %s WHERE id=%s;"""
-        cur.execute(query)
+        query= """UPDATE coche SET 
+                    id_usuario,  
+                    marca,      
+                    modelo,      
+                    anio,        
+                    kilometraje, 
+                    combustible,
+                    precio,     
+                    matricula,
+                    caballos,  
+                    puertas,    
+                    version,    
+                    plazas       
+                FROM coche 
+                WHERE id = %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s;"""
+     
+        values = (
+            coche.id_usuario,
+            coche.marca,
+            coche.modelo,
+            coche.anio,
+            coche.kilometraje,
+            coche.combustible,
+            coche.precio,
+            coche.matricula,
+            coche.caballos,
+            coche.puertas,
+            coche.version,
+            coche.plazas,
+            id_coche
+        )
+        cur.execute(query, values)
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Actualitzat correctament"}
     except Exception as e:

@@ -39,7 +39,7 @@ class Coche(BaseModel):
     modelo: Optional[str] = None
     anio: Optional[int] = None
     kilometraje: Optional[int] = None
-    combustible: Optional[int] = None
+    combustible: Optional[str] = None
     precio: Optional[int] = None
     matricula: Optional[str] = None
     caballos: Optional[int] = None

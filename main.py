@@ -88,13 +88,27 @@ async def get_coche_detallado(id_coche: int):
     return coche
 
 @app.put("/put/coche_detallado/{id_coche}")
-async def update_perfil(id_coche: int, coche: Coche):
+async def update_coche(id_coche: int, coche: Coche):
     result = update.update_coche_detallado(id_coche, coche)
     if result["status"] != 1:
         raise HTTPException(status_code=500, detail=result["message"])
     return result
 
 @app.post("/post/coche_detallado")
-async def create_movimiento(coche: Coche):
+async def create_coche(coche: Coche):
     result = create.create_coche_detallado(coche)
     return result
+
+@app.delete("/delete/coche/{id_coche}")
+async def delete_coche(id_coche: int):
+    result = delete.delete_coche_detallado(id_coche)
+    if result["status"] != 1:
+        raise HTTPException(status_code=500, detail=result["message"])
+    return result
+#----------------------------------------CARTERA--------------------------------------------
+@app.get("/get/saldo/{id}")
+async def get_saldo(id: int):
+    coche = read.get_saldo(id)
+    if not coche:
+        raise HTTPException(status_code=404, detail="Coche no encontrado")
+    return coche

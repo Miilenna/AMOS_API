@@ -18,12 +18,12 @@ def delete_usuario(id: int):
         conn.close()  # Tanca la connexió amb la base de dades
 
 #PG ANUNCIOS INDIVIDUAL
-def delete_coche_detallado(marca, modelo):
+def delete_coche_detallado(id_coche: int):
     conn=connexio()
     cur = conn.cursor()
     try:
         query= "DELETE FROM coche WHERE id=%s"
-        cur.execute(query, (marca, modelo))
+        cur.execute(query, (id_coche,))
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Eliminado correctament"}
     except Exception as e:

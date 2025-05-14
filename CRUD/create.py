@@ -50,23 +50,36 @@ def create_movimiento(movimiento: Movimiento):
         conn.close()  # Tanca la connexió amb la base de dades
 
 #PG ANUNCIOS INDIVIDUAL
-def create_coche_detallado():
+def create_coche_detallado(coche: Coche):
     conn=connexio()
     cur = conn.cursor()
     try:
         query= """INSERT INTO coche(
-                    marca, 
-                    modelo, 
-                    any, 
+                    id_usuario,  
+                    marca,      
+                    modelo,      
+                    anio,        
                     kilometraje, 
-                    combustible, 
-                    precio, 
-                    caballos, 
-                    puertas, 
-                    version, 
-                    plazas)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
-        values = (Coche.marca, Coche.modelo, Coche.any, Coche.kilometros, Coche.combustible, Coche.precio, Coche.caballos, Coche.puertas, Coche.version, Coche.plazas)
+                    combustible,
+                    precio,     
+                    matricula,
+                    caballos,  
+                    puertas,    
+                    version,    
+                    plazas)       
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        values = (coche.id_usuario,
+            coche.marca,
+            coche.modelo,
+            coche.anio,
+            coche.kilometraje,
+            coche.combustible,
+            coche.precio,
+            coche.matricula,
+            coche.caballos,
+            coche.puertas,
+            coche.version,
+            coche.plazas)
         cur.execute(query, values)
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Insert successful"}

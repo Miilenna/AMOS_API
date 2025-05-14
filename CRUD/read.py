@@ -99,11 +99,11 @@ def get_movimientos(id: int):
     return text
 
 #PG SALDO
-def get_saldo():
+def get_saldo(id:int):
     conn = connexio()
     cur = conn.cursor()
 
-    cur.execute("SELECT cartera FROM usuario WHERE id=%s;")
+    cur.execute("SELECT cartera FROM usuario WHERE id=%s;", (id,))
     text = cur.fetchall()
 
     cur.close()

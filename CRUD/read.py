@@ -68,17 +68,20 @@ def get_usuario_registro(id: int):
     return text
 
 #PG INICIO_SESION
-def get_usuario_sesion(id: int):
+def get_usuario_sesion(email: str):
     conn = connexio()
     cur = conn.cursor()
-
-    cur.execute("SELECT nombre, contrasenya FROM usuario WHERE id=%s;", (id,))
-    text = cur.fetchall()
+    cur.execute("SELECT nombre, contrasenya FROM usuario WHERE correo_electronico=%s;", (email,))
+    result = cur.fetchone()
 
     cur.close()
     conn.close()
 
-    return text
+    if result:
+        return {"nombre": result[0], "contrasenya": result[1]}
+    else:
+        return None  
+
 
 #PG MOVIMIENTOS
 def get_movimientos(id: int):

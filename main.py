@@ -6,15 +6,34 @@ import CRUD.update as update
 import CRUD.create as create
 import CRUD.delete as delete
 from mysql.connector import pooling
+from fastapi.middleware.cors import CORSMiddleware
 from CRUD.models import Usuario, UsuarioUpdate, Movimiento, PerfilUpdate, Coche
 
 
 app = FastAPI()
 
+
+# Configuración CORS actualizada
+origins = [
+    "http://localhost:8082",
+    "http://127.0.0.1:8082",
+    "http://localhost:8081",
+    "http://127.0.0.1:8081"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+    expose_headers=["*"]
+)
 #----------------------------------USUARIO-------------------------------------------
-@app.get("/get/usuarios/{id}")
-async def get_usuarios(id: int):
-    usuario = read.get_usuario_sesion(id)
+@app.get("/get/usuarios/{email}")
+async def get_usuarios(email: str):
+    # Tu lógica para obtener el usuario
+    usuario = read.get_usuario_sesion(email)
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return usuario

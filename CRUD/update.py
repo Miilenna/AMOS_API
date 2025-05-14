@@ -91,7 +91,6 @@ def update_coche_detallado(id_coche: int, coche: Coche):
                     puertas,    
                     version,    
                     plazas       
-                FROM coche 
                 WHERE id = %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s;"""
      
         values = (

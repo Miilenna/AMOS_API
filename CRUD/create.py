@@ -55,7 +55,6 @@ def create_coche_detallado(coche: Coche):
     cur = conn.cursor()
     try:
         query= """INSERT INTO coche(
-                    id_usuario,  
                     marca,      
                     modelo,      
                     anio,        
@@ -67,8 +66,8 @@ def create_coche_detallado(coche: Coche):
                     puertas,    
                     version,    
                     plazas)       
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
-        values = (coche.id_usuario,
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        values = (
             coche.marca,
             coche.modelo,
             coche.anio,

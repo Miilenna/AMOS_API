@@ -7,9 +7,14 @@ import CRUD.create as create
 import CRUD.delete as delete
 from mysql.connector import pooling
 from CRUD.models import Usuario, UsuarioUpdate, Movimiento, PerfilUpdate, Coche
-
+from fastapi import Body
+from typing import Dict, Any
 
 app = FastAPI()
+
+@app.get("/ping")
+def ping():
+    return {"status": "ok"}
 
 #----------------------------------USUARIO-------------------------------------------
 @app.get("/get/usuarios/{id}")
@@ -105,6 +110,21 @@ async def delete_coche(id_coche: int):
     if result["status"] != 1:
         raise HTTPException(status_code=500, detail=result["message"])
     return result
+
+@app.put("/put/buscar_coches_filtrado")
+async def buscar_coches_filtrado(filtros: Dict[str, Any] = Body(...)):
+    resultados = read.buscar_coches_filtrado(
+        marca=filtros.get("marca"),
+        modelo=filtros.get("modelo"),
+        anio=filtros.get("anioMin"),  # ← Usa las claves correctas del frontend
+        kilometraje_max=filtros.get("kilometraje_max"),
+        combustible=filtros.get("combustible"),
+        precio_min=filtros.get("precio_min"),
+        precio_max=filtros.get("precio_max"),
+        puertas=filtros.get("puertas"),
+        plazas=filtros.get("plazas")
+    )
+    return resultados
 #----------------------------------------CARTERA--------------------------------------------
 @app.get("/get/saldo/{id}")
 async def get_saldo(id: int):

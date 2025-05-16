@@ -110,3 +110,77 @@ def get_saldo(id:int):
     conn.close()
 
     return text
+
+   # A DE COCHES (SIN ID)
+def buscar_coches_filtrado(
+    marca=None,
+    modelo=None,
+    anio=None,
+    kilometraje_max=None,
+    combustible=None,
+    precio_min=None,
+    precio_max=None,
+    puertas=None,
+    plazas=None
+):
+    conn = connexio()
+    cur = conn.cursor()
+
+    query = """
+        SELECT 
+            id_usuario,
+            stock,
+            marca,
+            modelo,
+            anio,
+            kilometraje,
+            combustible,
+            precio,
+            matricula,
+            caballos,
+            puertas,
+            version,
+            plazas
+        FROM coche
+    """
+    filtros = []
+    valores = []
+
+    if marca:
+        filtros.append("marca ILIKE %s")
+        valores.append(f"%{marca}%")
+    if modelo:
+        filtros.append("modelo ILIKE %s")
+        valores.append(f"%{modelo}%")
+    if anio:
+        filtros.append("anio = %s")
+        valores.append(anio)
+    if kilometraje_max:
+        filtros.append("kilometraje <= %s")
+        valores.append(kilometraje_max)
+    if combustible:
+        filtros.append("combustible ILIKE %s")
+        valores.append(f"%{combustible}%")
+    if precio_min:
+        filtros.append("precio >= %s")
+        valores.append(precio_min)
+    if precio_max:
+        filtros.append("precio <= %s")
+        valores.append(precio_max)
+    if puertas:
+        filtros.append("puertas = %s")
+        valores.append(puertas)
+    if plazas:
+        filtros.append("plazas = %s")
+        valores.append(plazas)
+
+    if filtros:
+        query += " WHERE " + " AND ".join(filtros)
+
+    cur.execute(query, valores)
+    resultados = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return resultados

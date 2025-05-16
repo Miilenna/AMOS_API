@@ -17,7 +17,7 @@ def connexio():
     return db_pool.get_connection() """
 
 import mysql.connector  # Asegúrate de importar mysql.connector
-
+from mysql.connector import pooling
 # Configura la connexió a MariaDB
 def connexio():
     try:
@@ -38,3 +38,5 @@ def connexio():
     except mysql.connector.Error as e:
         print(f"Error al conectar: {e}")
         return None
+
+# Configura la connexió a MariaDB

@@ -14,6 +14,8 @@ def create_usuario(usuario: Usuario):
             correo_electronico,
             fecha_nacimiento,
             contrasenya,
+            IBAN,
+            cartera
             direccion) VALUES (%s, %s, %s, %s, %s, %s);"""
         values = (usuario.nombre, usuario.apellido, usuario.correo_electronico, usuario.fecha_nacimiento, usuario.contrasenya, usuario.direccion)
         cur.execute(query, values)
@@ -55,7 +57,6 @@ def create_coche_detallado(coche: Coche):
     cur = conn.cursor()
     try:
         query= """INSERT INTO coche(
-                    id_usuario,  
                     marca,      
                     modelo,      
                     anio,        
@@ -67,8 +68,8 @@ def create_coche_detallado(coche: Coche):
                     puertas,    
                     version,    
                     plazas)       
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
-        values = (coche.id_usuario,
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        values = (
             coche.marca,
             coche.modelo,
             coche.anio,

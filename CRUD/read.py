@@ -2,37 +2,43 @@ from connexio import connexio
 import psycopg2
 
 #PG INICIO, RESULTADOS
-def get_coche(id_coche: int):
-    conn=connexio()
+def get_coche(id: int):
+    conn = connexio()
     cur = conn.cursor()
-    
     cur.execute("""
-            SELECT 
-                id_usuario,
-                marca,
-                modelo,
-                anio,
-                precio,
-                matricula
-            FROM coche 
-            WHERE id = %s;
-        """, (id_coche,))
-    coche_data = cur.fetchone()    
-    
+        SELECT
+            id,
+            id_usuario,
+            marca,
+            modelo,
+            anio,
+            kilometraje,
+            combustible,
+            precio,
+            matricula,
+            caballos,
+            puertas,
+            version,
+            plazas
+        FROM coche
+        WHERE id = %s;
+    """, (id,))
+    coche_data = cur.fetchone()  
     cur.close()
     conn.close()
     
     return coche_data
+      
 
 #PG ANUNCIOS INDIVIDUAL
-def get_coche_detallado(id_coche: int):
+def get_coche_detallado(id: int):
     conn = connexio()
     cur = conn.cursor()
     
     cur.execute("""
         SELECT 
-            id_usuario,  
-            stock,
+            id,
+            id_usuario,
             marca,      
             modelo,      
             anio,        
@@ -46,7 +52,7 @@ def get_coche_detallado(id_coche: int):
             plazas       
         FROM coche 
         WHERE id = %s;
-    """, (id_coche,))
+    """, (id,))
     
     coche_data = cur.fetchone()  
     cur.close()
@@ -54,13 +60,71 @@ def get_coche_detallado(id_coche: int):
     
     return coche_data 
 
+def get_coches_usuario(id_usuario: int):
+    conn = connexio()
+    cur = conn.cursor()
+    
+    cur.execute("""
+        SELECT 
+            id,
+            marca,      
+            modelo,      
+            anio,        
+            kilometraje, 
+            combustible,
+            precio,     
+            matricula,
+            caballos,  
+            puertas,    
+            version,    
+            plazas       
+        FROM coche 
+        WHERE id_usuario = %s;
+    """, (id_usuario,))
+    
+    coches_data = cur.fetchall()
+    cur.close()
+    conn.close()
+    
+    return coches_data
+
+def get_coche_detallado_inicio():
+    conn = connexio()
+    cur = conn.cursor()
+    
+    cur.execute("""
+        SELECT 
+            id,
+            marca,      
+            modelo,      
+            anio,        
+            kilometraje, 
+            combustible,
+            precio,     
+            caballos,  
+            puertas,    
+            version,    
+            plazas       
+        FROM coche;
+    """)
+    
+    coches_data = cur.fetchall()  
+    
+    column_names = [desc[0] for desc in cur.description]
+    result = [dict(zip(column_names, row)) for row in coches_data]
+    
+    cur.close()
+    conn.close()
+    
+    return result 
+
 #PG REGISTRO
 def get_usuario_registro(id: int):
     conn = connexio()
     cur = conn.cursor()
 
     cur.execute("SELECT nombre, apellido, correo_electronico, fecha_nacimiento, contrasenya, IBAN, cartera, direccion FROM usuario WHERE id=%s;", (id,))
-    text = cur.fetchall()
+    text = cur.fetchone()
 
     cur.close()
     conn.close()
@@ -71,30 +135,37 @@ def get_usuario_registro(id: int):
 def get_usuario_sesion(email: str):
     conn = connexio()
     cur = conn.cursor()
-    cur.execute("SELECT nombre, contrasenya FROM usuario WHERE correo_electronico=%s;", (email,))
+    cur.execute("SELECT id, nombre, contrasenya FROM usuario WHERE correo_electronico=%s;", (email,))
     result = cur.fetchone()
-
     cur.close()
     conn.close()
 
     if result:
-        return {"nombre": result[0], "contrasenya": result[1]}
+        return {"id": result[0], "nombre": result[1], "contrasenya": result[2]}
     else:
-        return None  
+        return None 
 
 
 #PG MOVIMIENTOS
-def get_movimientos(id: int):
+def get_movimientos(id_usuario: int):
     conn = connexio()
-    cur = conn.cursor()
+    cur = conn.cursor(dictionary=True)
     
-    #añadir en la doc y en las tablas
     cur.execute("""
-        SELECT tipo_movimiento, fecha_movimiento, valor, divisa
-        FROM movimiento 
-        WHERE id_usuario = %s;
-    """, (id,))
+        SELECT
+            tipo_movimiento,
+            valor,
+            divisa,
+            region,
+            fecha_movimiento
+            FROM movimiento
+            WHERE id_usuario = %s
+            ORDER BY fecha_movimiento DESC
+    """, (id_usuario,))
     text = cur.fetchall()
+    
+    for mov in text:
+        mov["fecha_formateada"] = mov["fecha_movimiento"].strftime("%d/%m/%Y %H:%M")
     
     cur.close()
     conn.close()

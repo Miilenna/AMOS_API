@@ -15,9 +15,8 @@ def create_usuario(usuario: Usuario):
             fecha_nacimiento,
             contrasenya,
             IBAN,
-            cartera
-            direccion) VALUES (%s, %s, %s, %s, %s, %s);"""
-        values = (usuario.nombre, usuario.apellido, usuario.correo_electronico, usuario.fecha_nacimiento, usuario.contrasenya, usuario.direccion)
+            direccion) VALUES (%s, %s, %s, %s, %s, %s, %s);"""
+        values = (usuario.nombre, usuario.apellido, usuario.correo_electronico, usuario.fecha_nacimiento, usuario.contrasenya, usuario.IBAN, usuario.direccion)
         cur.execute(query, values)
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Insert successful"}
@@ -35,12 +34,12 @@ def create_movimiento(movimiento: Movimiento):
     cur = conn.cursor()
     try:
         query = """INSERT INTO movimiento(
-            tipo_movimiento,
             id_usuario,
+            tipo_movimiento,
             divisa,
             valor,
             region) VALUES (%s, %s, %s, %s, %s);"""
-        values = (movimiento.tipo_movimiento, movimiento.id_usuario, movimiento.divisa, movimiento.valor, movimiento.region)
+        values = (movimiento.id_usuario, movimiento.tipo_movimiento, movimiento.divisa, movimiento.valor, movimiento.region)
         cur.execute(query, values)
         conn.commit()  # Confirma els canvis
         return {"status": 1, "message": "Insert successful"}
@@ -57,6 +56,7 @@ def create_coche_detallado(coche: Coche):
     cur = conn.cursor()
     try:
         query= """INSERT INTO coche(
+                    id_usuario,
                     marca,      
                     modelo,      
                     anio,        
@@ -67,9 +67,11 @@ def create_coche_detallado(coche: Coche):
                     caballos,  
                     puertas,    
                     version,    
-                    plazas)       
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+                    plazas
+                )       
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
         values = (
+            coche.id_usuario,
             coche.marca,
             coche.modelo,
             coche.anio,

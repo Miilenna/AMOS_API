@@ -1,3 +1,4 @@
+from fastapi import File, UploadFile
 from pydantic import BaseModel
 from typing import Optional
 from datetime import date
@@ -17,9 +18,9 @@ class UsuarioUpdate(BaseModel):
     apellido: Optional[str] = None
     fecha_nacimiento: Optional[date]= None
     contrasenya: Optional[str] = None
-    direccion: Optional[str] = None
     IBAN: Optional[str] = None
     cartera: Optional[float] = None 
+    direccion: Optional[str] = None
     
 class PerfilUpdate(BaseModel):
     nombre: Optional[str] = None

@@ -38,7 +38,7 @@ def update_usuario(id: int, usuario: UsuarioUpdate):
 
 
 #PG PERFIL
-def update_perfil(contrasenya: str, perfil: PerfilUpdate):    
+def update_perfil(id_usuario: int, perfil: PerfilUpdate):    
     conn = connexio()
     cur = conn.cursor()
     try:
@@ -48,9 +48,9 @@ def update_perfil(contrasenya: str, perfil: PerfilUpdate):
                 nombre = %s,
                 apellido = %s,
                 fecha_nacimiento = %s,
-                direccion = %s,
-                IBAN = %s
-            WHERE contrasenya = %s;
+                IBAN = %s,
+                direccion = %s
+            WHERE id = %s;
         """
         
         # Valores en el orden correcto
@@ -58,9 +58,9 @@ def update_perfil(contrasenya: str, perfil: PerfilUpdate):
             perfil.nombre,
             perfil.apellido,
             perfil.fecha_nacimiento,
-            perfil.direccion,
             perfil.IBAN,
-            contrasenya
+            perfil.direccion,
+            id_usuario
         )
         
         cur.execute(query, values)
@@ -79,19 +79,19 @@ def update_coche_detallado(id_coche: int, coche: Coche):
     cur = conn.cursor()
     try:
         query= """UPDATE coche SET 
-                    id_usuario,  
-                    marca,      
-                    modelo,      
-                    anio,        
-                    kilometraje, 
-                    combustible,
-                    precio,     
-                    matricula,
-                    caballos,  
-                    puertas,    
-                    version,    
-                    plazas       
-                WHERE id = %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s;"""
+                    id_usuario = %s,  
+                    marca = %s,      
+                    modelo = %s,      
+                    anio=%s,        
+                    kilometraje=%s, 
+                    combustible=%s,
+                    precio=%s,     
+                    matricula=%s,
+                    caballos=%s,  
+                    puertas=%s,    
+                    version=%s,    
+                    plazas=%s
+                WHERE id = %s"""
      
         values = (
             coche.id_usuario,

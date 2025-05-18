@@ -13,20 +13,18 @@ from typing import Dict, Any
 
 app = FastAPI()
 
-# Configuración CORS actualizada
 origins = [
     "http://localhost:8082",
-    "http://127.0.0.1:8082",
+    "http://localhost:8082",
     "http://localhost:8081",
     "http://127.0.0.1:8081",
-    "http://127.0.0.1:63314"
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  
     allow_headers=["*"],
     expose_headers=["*"]
 )
@@ -38,19 +36,16 @@ def ping():
 #----------------------------------USUARIO-------------------------------------------
 @app.get("/get/usuarios/{email}")
 async def get_usuarios(email: str):
-    # Tu lógica para obtener el usuario
     usuario = read.get_usuario_sesion(email)
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return usuario
 
-# CREATE - Crear usuario
-@app.post("/post/usuarios")
+@app.post("/post/usuario")
 async def create_usuario(usuario: Usuario):
     resultado = create.create_usuario(usuario)
     return resultado
 
-# UPDATE - Actualizar usuario
 @app.put("/put/usuarios/{id}")
 async def update_usuario(id: int, usuario: UsuarioUpdate):
     result = update.update_usuario(id, usuario)
@@ -59,20 +54,19 @@ async def update_usuario(id: int, usuario: UsuarioUpdate):
     return result
 
 
-# DELETE - Eliminar usuario
-@app.delete("/delete/usuarios/{contrasenya}")
-async def delete_usuario(id: int):
+@app.delete("/delete/usuarios/{id}") 
+async def delete_usuario(id: int): 
     result = delete.delete_usuario(id)
     if result["status"] != 1:
         raise HTTPException(status_code=500, detail=result["message"])
     return result
 
 #------------------------------MOVIMIENTO-----------------------------------------------------
-@app.get("/get/movimiento")
-async def get_movimiento(id: int):
-    result = read.get_movimientos(id)
+@app.get("/get/movimiento/{id_usuario}") 
+async def get_movimiento(id_usuario: int):
+    result = read.get_movimientos(id_usuario)
     if not result:
-        raise HTTPException(status_code=404, detail="Usuarios no encontrados")
+        raise HTTPException(status_code=404, detail="Movimientos no encontrados") 
     return result
 
 # CREATE - Crear usuario
@@ -87,30 +81,44 @@ async def create_movimiento(movimiento: Movimiento):
 async def get_perfil(id: int):
     perfil = read.get_usuario_registro(id)
     if not perfil:
-        raise HTTPException(status_code=404, detail="Usuarios no encontrados")
+        raise HTTPException(status_code=404, detail="Perfil no encontrado")
     return perfil
 
-# UPDATE - Actualizar usuario
-@app.put("/put/perfil/{contrasenya}")
-async def update_perfil(contrasenya: str, perfil: PerfilUpdate):
-    result = update.update_perfil(contrasenya, perfil)
+@app.put("/put/perfil/{id}") 
+async def update_perfil(id: int, perfil: PerfilUpdate): 
+    result = update.update_perfil(id, perfil) 
     if result["status"] != 1:
         raise HTTPException(status_code=500, detail=result["message"])
     return result
 #------------------------------------COCHE-----------------------------------------------------
+
 @app.get("/get/coche/{id_coche}")
 async def get_coche(id_coche: int):
-    coche = read.get_coche(id_coche)
-    if not coche:
-        raise HTTPException(status_code=404, detail="Usuarios no encontrados")
-    return coche
-
-@app.get("/get/coche_detallado/{id_coche}")
-async def get_coche_detallado(id_coche: int):
-    coche = read.get_coche_detallado(id_coche)
+    coche = read.get_coche(id_coche)  
     if not coche:
         raise HTTPException(status_code=404, detail="Coche no encontrado")
     return coche
+
+@app.get("/get/coche/det/{id_coche}")
+async def get_coche_detallado(id_coche: int):
+    coche = read.get_coche_detallado(id_coche)  
+    if not coche:
+        raise HTTPException(status_code=404, detail="Coche no encontrado")
+    return coche
+
+@app.get("/get/coches_usuario/{id_usuario}")
+async def get_coches_usuario(id_usuario: int):
+    coches = read.get_coches_usuario(id_usuario)  
+    if not coches:
+        raise HTTPException(status_code=404, detail="No se encontraron coches para el usuario")
+    return coches
+
+@app.get("/get/coches_detallados_inicio/")
+async def get_coches_detallados_inicio():
+    coches = read.get_coche_detallado_inicio()  
+    if not coches:
+        raise HTTPException(status_code=404, detail="No se encontraron coches")
+    return coches
 
 @app.put("/put/coche_detallado/{id_coche}")
 async def update_coche(id_coche: int, coche: Coche):
@@ -136,7 +144,7 @@ async def buscar_coches_filtrado(filtros: Dict[str, Any] = Body(...)):
     resultados = read.buscar_coches_filtrado(
         marca=filtros.get("marca"),
         modelo=filtros.get("modelo"),
-        anio=filtros.get("anioMin"),  # ← Usa las claves correctas del frontend
+        anio=filtros.get("anioMin"), 
         kilometraje_max=filtros.get("kilometraje_max"),
         combustible=filtros.get("combustible"),
         precio_min=filtros.get("precio_min"),
@@ -148,7 +156,7 @@ async def buscar_coches_filtrado(filtros: Dict[str, Any] = Body(...)):
 #----------------------------------------CARTERA--------------------------------------------
 @app.get("/get/saldo/{id}")
 async def get_saldo(id: int):
-    coche = read.get_saldo(id)
-    if not coche:
-        raise HTTPException(status_code=404, detail="Coche no encontrado")
-    return coche
+    saldo = read.get_saldo(id) 
+    if not saldo:
+        raise HTTPException(status_code=404, detail="Saldo no encontrado") # Corrected message
+    return saldo

@@ -48,11 +48,53 @@ def get_coche_detallado(id_coche: int):
         WHERE id = %s;
     """, (id_coche,))
     
-    coche_data = cur.fetchone()  
+    row = cur.fetchone()
     cur.close()
     conn.close()
     
-    return coche_data 
+    if row:
+        # Devuelve una lista de un solo diccionario para que la respuesta sea un array JSON
+        keys = [
+            "id_usuario", "stock", "marca", "modelo", "anio", "kilometraje",
+            "combustible", "precio", "matricula", "caballos", "puertas", "version", "plazas"
+        ]
+        return [dict(zip(keys, row))]
+    else:
+        return []
+
+def get_coches_por_usuario(id_usuario: int):
+    conn = connexio()
+    cur = conn.cursor()
+    
+    cur.execute("""
+        SELECT 
+            id,  
+            stock,
+            marca,      
+            modelo,      
+            anio,        
+            kilometraje, 
+            combustible,
+            precio,     
+            matricula,
+            caballos,  
+            puertas,    
+            version,    
+            plazas       
+        FROM coche 
+        WHERE id_usuario = %s;
+    """, (id_usuario,))
+    
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    
+    keys = [
+        "id", "stock", "marca", "modelo", "anio", "kilometraje",
+        "combustible", "precio", "matricula", "caballos", "puertas", "version", "plazas"
+    ]
+    # Return a list of dicts, one per row
+    return [dict(zip(keys, row)) for row in rows]
 
 #PG REGISTRO
 def get_usuario_registro(id: int):
@@ -73,14 +115,31 @@ def get_usuario_sesion(email: str):
     cur = conn.cursor()
     cur.execute("SELECT nombre, contrasenya FROM usuario WHERE correo_electronico=%s;", (email,))
     result = cur.fetchone()
+    # Ensure all results are read to avoid "Unread result found" error
+    cur.fetchall()
 
     cur.close()
     conn.close()
 
     if result:
-        return {"nombre": result[0], "contrasenya": result[1]}
+        # Return as a list of dicts to match expected JSON array
+        return [{"nombre": result[0], "contrasenya": result[1]}]
     else:
-        return None  
+        return []
+
+def get_usuario_sesion_conID(email: str, contrasenya: str):
+    conn = connexio()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM usuario WHERE correo_electronico=%s and contrasenya=%s;", (email, contrasenya,))
+    result = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    if result:
+        return {"id": result[0]}
+    else:
+        return None 
 
 
 #PG MOVIMIENTOS
@@ -118,11 +177,12 @@ def get_saldo(id:int):
 def buscar_coches_filtrado(
     marca=None,
     modelo=None,
-    anio=None,
+    anioMin=None,
+    anioMax=None,
     kilometraje_max=None,
-    combustible=None,
     precio_min=None,
     precio_max=None,
+    combustible=None,
     puertas=None,
     plazas=None
 ):
@@ -131,45 +191,52 @@ def buscar_coches_filtrado(
 
     query = """
         SELECT 
-            id_usuario,
-            stock,
-            marca,
-            modelo,
-            anio,
-            kilometraje,
-            combustible,
-            precio,
-            matricula,
-            caballos,
-            puertas,
-            version,
-            plazas
+            id, marca, modelo, anio, 
+            kilometraje, precio, combustible
         FROM coche
     """
     filtros = []
     valores = []
 
+    # Filtro por marca y modelo (LIKE para búsqueda parcial)
     if marca:
-        filtros.append("marca ILIKE %s")
+        filtros.append("marca LIKE %s")
         valores.append(f"%{marca}%")
     if modelo:
-        filtros.append("modelo ILIKE %s")
+        filtros.append("modelo LIKE %s")
         valores.append(f"%{modelo}%")
-    if anio:
-        filtros.append("anio = %s")
-        valores.append(anio)
-    if kilometraje_max:
+
+    # Filtro por rango de AÑO
+    if anioMin is not None and anioMax is not None:
+        filtros.append("anio BETWEEN %s AND %s")
+        valores.extend([anioMin, anioMax])
+    elif anioMin is not None:
+        filtros.append("anio >= %s")
+        valores.append(anioMin)
+    elif anioMax is not None:
+        filtros.append("anio <= %s")
+        valores.append(anioMax)
+
+    # Filtro por KILOMETRAJE (hasta el máximo)
+    if kilometraje_max is not None:
         filtros.append("kilometraje <= %s")
         valores.append(kilometraje_max)
-    if combustible:
-        filtros.append("combustible ILIKE %s")
-        valores.append(f"%{combustible}%")
-    if precio_min:
+
+    # Filtro por rango de PRECIO
+    if precio_min is not None and precio_max is not None:
+        filtros.append("precio BETWEEN %s AND %s")
+        valores.extend([precio_min, precio_max])
+    elif precio_min is not None:
         filtros.append("precio >= %s")
         valores.append(precio_min)
-    if precio_max:
+    elif precio_max is not None:
         filtros.append("precio <= %s")
         valores.append(precio_max)
+
+    # Otros filtros
+    if combustible:
+        filtros.append("combustible = %s")
+        valores.append(combustible)
     if puertas:
         filtros.append("puertas = %s")
         valores.append(puertas)
@@ -182,8 +249,5 @@ def buscar_coches_filtrado(
 
     cur.execute(query, valores)
     resultados = cur.fetchall()
-
-    cur.close()
     conn.close()
-
     return resultados

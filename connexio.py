@@ -4,9 +4,9 @@ from mysql.connector import pooling
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'root',
+    'password': 'Pa123@77',
     'database': 'carplaytrade',
-    'port': '3308',
+    'port': '3307',
     'collation': 'utf8mb4_general_ci'
 }
 
@@ -16,7 +16,7 @@ db_pool = pooling.MySQLConnectionPool(pool_name="mypool", pool_size=5, **db_conf
 def connexio():
     return db_pool.get_connection()
 
-''' import mysql.connector  # Asegúrate de importar mysql.connector
+""" import mysql.connector  # Asegúrate de importar mysql.connector
 from mysql.connector import pooling
 # Configura la connexió a MariaDB
 def connexio():
@@ -38,6 +38,5 @@ def connexio():
     except mysql.connector.Error as e:
         print(f"Error al conectar: {e}")
         return None
-
+ """
 # Configura la connexió a MariaDB
-'''
